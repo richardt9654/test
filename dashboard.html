@@ -296,40 +296,83 @@
     </div>
 
     <script>
-        // Activity Chart
-        const activityCtx = document.getElementById('activityChart').getContext('2d');
-        new Chart(activityCtx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                datasets: [{
-                    label: 'User Activity',
-                    data: [65, 59, 80, 81, 56, 90],
-                    borderColor: '#1a73e8',
-                    tension: 0.4,
-                    fill: false
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
-            }
-        });
+        // Chart initialization with error handling and cleanup
+        let activityChart = null;
+        let distributionChart = null;
 
-        // Distribution Chart
-        const distributionCtx = document.getElementById('distributionChart').getContext('2d');
-        new Chart(distributionCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Desktop', 'Mobile', 'Tablet'],
-                datasets: [{
-                    data: [55, 35, 10],
-                    backgroundColor: ['#1a73e8', '#34a853', '#fbbc05']
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
+        function initializeCharts() {
+            try {
+                // Activity Chart
+                const activityCanvas = document.getElementById('activityChart');
+                if (activityCanvas) {
+                    const activityCtx = activityCanvas.getContext('2d');
+                    // Destroy existing chart if it exists
+                    if (activityChart) {
+                        activityChart.destroy();
+                    }
+                    activityChart = new Chart(activityCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                            datasets: [{
+                                label: 'User Activity',
+                                data: [65, 59, 80, 81, 56, 90],
+                                borderColor: '#1a73e8',
+                                tension: 0.4,
+                                fill: false
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            animation: {
+                                duration: 1000 // Prevent infinite animations
+                            }
+                        }
+                    });
+                }
+
+                // Distribution Chart
+                const distributionCanvas = document.getElementById('distributionChart');
+                if (distributionCanvas) {
+                    const distributionCtx = distributionCanvas.getContext('2d');
+                    // Destroy existing chart if it exists
+                    if (distributionChart) {
+                        distributionChart.destroy();
+                    }
+                    distributionChart = new Chart(distributionCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Desktop', 'Mobile', 'Tablet'],
+                            datasets: [{
+                                data: [55, 35, 10],
+                                backgroundColor: ['#1a73e8', '#34a853', '#fbbc05']
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            animation: {
+                                duration: 1000 // Prevent infinite animations
+                            }
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error initializing charts:', error);
+            }
+        }
+
+        // Initialize charts when DOM is ready
+        document.addEventListener('DOMContentLoaded', initializeCharts);
+
+        // Cleanup on page unload
+        window.addEventListener('unload', () => {
+            if (activityChart) {
+                activityChart.destroy();
+            }
+            if (distributionChart) {
+                distributionChart.destroy();
             }
         });
     </script>
